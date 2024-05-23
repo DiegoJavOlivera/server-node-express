@@ -8,10 +8,10 @@ const managerPro = new productManager();
 const managerCart = new cartManager();
 
 router.get("/:cid", async(req,res)=>{
-  const cartId = req.params.cid;
-  cartId = parseInt(cartId);
+  const cartId = parseInt(req.params.cid);
+
   const productCart = await managerCart.showProductCart(cartId);
-  if(productCart !== undefined){
+  if(productCart === undefined){
     res.status(404).send("Product Cart not found");
   }
   res.send(productCart)
@@ -27,30 +27,16 @@ router.post("/",async (req,res)=>{
 })
 
 router.post("/:cid/product/:pid",async (req,res)=>{
-  const cartId = req.params.cid;
-  cartId = parseInt(cartId);
-  const productId = req.params.pid;
-  productId = parseInt(productId);
-  const quantityProduct = req.body.quantity;
-  const objectIdCartManager = await managerCart.showProductCart(cartId);
-  const idProductManager = await managerPro.showProducts(productId);
-  if(idProductManager === undefined){
-    res.status(404).send("Product not found");
+  const paramsCartId = parseInt(req.params.cid);
+  const paramsProducId = parseInt(req.params.pid);
+  const {quantity} = req.body;
+  const updateCart = await managerCart.updateCart(paramsCartId, paramsProducId,quantity)
+  if(updateCart !== undefined){
+    res.status(400).send("Product Cart not updated");
   }
-  if(objectIdCartManager === undefined){
-    res.status(404).send("Cart not found");
-  }
-  if (!objectIdCartManager.product.quantity){
-    objectIdCartManager.product.quantity = 1;
-  }
-  else {
-    objectIdCartManager.product.quantity = objectIdCartManager.product.quantity + quantityProduct;
-  }
-  
-  
-  objectIdCartManager.product.push(idProductManager.id, objectIdCartManager.product.quantity);
-  
-  res.render(objectIdCartManager)
+  res.status(200).send("Product Cart updated");
 })
+
+
 
 export default router;

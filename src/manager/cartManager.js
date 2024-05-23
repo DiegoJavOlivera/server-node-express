@@ -1,20 +1,20 @@
 import fs from "fs";
-
+import productManager from "../manager/productManager.js";
+const manager = new productManager();
 
 const PATH = "src/file/cart.json";
 
-class CartManager{
-  
-  constructor(){
+class CartManager {
+  constructor() {
     this.init();
   }
-  async init(){
-    if (fs.existsSync(PATH)){
-      console.log("File cart exists")
+  async init() {
+    if (fs.existsSync(PATH)) {
+      console.log("File cart exists");
     } else {
       try {
         await fs.promises.writeFile(PATH, JSON.stringify([]));
-      } catch (error){
+      } catch (error) {
         console.log(error);
         process.exit(1);
       }
@@ -29,47 +29,65 @@ class CartManager{
       process.exit(1);
     }
   }
-  
-  async saveProductsCart(productsCart){
-    try{
-      await fs.promises.writeFile(PATH, JSON.stringify(productsCart, null, "\t"))
-    } catch (error){
+
+  async saveProductsCart(productsCart) {
+    try {
+      await fs.promises.writeFile(
+        PATH,
+        JSON.stringify(productsCart, null, "\t"),
+      );
+    } catch (error) {
       console.log("Error writing productsCart", error);
       return false;
     }
   }
-  
-  async addProductCart({product}){
-    const newProductCart = {
-      product
-    }
-    for([key,value] of Object.entries(newProductCart)){
-      if (value === undefined || value === null || value === ''){
-        throw new Error(`Validation error: ${key} is required`);
-      }
-    }
-    
+
+  async addProductCart({product}) {
+    const newProductCart = {product};
+
     const dataProductCart = await this.getProductsCart();
-    
-    if (!dataProductCart.id){
-      newProductCart.id = 1;  
+
+    if (dataProductCart.length === 0) {
+      newProductCart.id = 1;
     } else {
-      newProductCart.id = newProductCart[dataProductCart.lenght - 1].id + 1;
+      newProductCart.id = dataProductCart[dataProductCart.length - 1].id + 1;
     }
-    
+
     dataProductCart.push(newProductCart);
 
-    return console.log("Cart created");
+    await this.saveProductsCart(dataProductCart);
   }
 
-  
-  async showProductCart(id){
+  async showProductCart(id) {
     const productCart = await this.getProductsCart();
-    const product = productCart.find((productCart) => productCart.id === id);
-    if(product === undefined){
-      throw new Error("Cart not found");
-    }
+    const product = productCart.find((u) => u.id === id);
+
     return product;
+  }
+
+  async updateCart(idCart, idProduct, quantity) {
+    const dataProductCart = await this.getProductsCart();
+    const cartIndex = dataProductCart.findIndex((cid) => cid.id === idCart);
+    if (cartIndex === -1){
+      throw Error("Cart index not found") 
+    }
+    const dataProductManager = await manager.getProducts();
+    const product = dataProductManager.find((pid) => pid.id === idProduct);
+    if (product === undefined) {
+      return false;
+    }
+    const cart = dataProductCart[cartIndex]
+    if(!Array.isArray(cart.product)){
+      cart.product = [];
+    }
+    const existingProductIndex = cart.product.findIndex(p => p.productId === idProduct);
+        if (existingProductIndex !== -1) {
+            cart.product[existingProductIndex].quantity += quantity;
+        } else { cart.product.push({ productId: product.id, quantity })
+
+    dataProductCart[cartIndex] = cart
+    await this.saveProductsCart(dataProductCart);
+    }
   }
 }
 
