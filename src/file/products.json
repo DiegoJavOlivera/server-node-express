@@ -75,5 +75,16 @@
 		"category": "Category T",
 		"thumbnails": "thumb11.jpg, thume32.jpg",
 		"id": 7
+	},
+	{
+		"title": "Product 16",
+		"description": "Description for Product 34",
+		"code": "P025",
+		"price": 24.36,
+		"stock": 20,
+		"category": "Category R",
+		"thumbnails": "thumb51.jpg, thum422.jpg",
+		"status": true,
+		"id": 8
 	}
 ]

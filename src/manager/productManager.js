@@ -37,18 +37,21 @@ class productManager {
       return false;
     }
   }
-  async createProducts({title, description, code, price, status, stock, category, thumbnails }) {
+  async createProducts({title, description, code, price, stock, category, thumbnails }) {
     const newProduct = {
       title,
       description,
       code,
       price,
-      status,
       stock,
       category,
       thumbnails,
     };
-    
+    if(!newProduct.stock){
+      newProduct.stock = 1
+    }
+    newProduct.status = true;
+
     const products = await this.getProducts();
     
     if(products.length === 0) {
