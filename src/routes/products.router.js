@@ -16,8 +16,12 @@ router.get("/",async (req,res)=>{
 })
 
 router.get("/:pid",async (req,res) =>{
-  const idProduc = parseInt(req.params.pid);
-  const product = await manager.showProducts(idProduc);
+  const idProduc = req.params.pid;
+  const validate = manager.validateNumb(idProduc);
+  if(validate.success === false){
+    return res.status(400).send(validate.error)
+  }
+  const product = await manager.showProducts(validate.result);
   if(product === undefined) {
     return res.status(404).send("Product not found");
   }
@@ -25,7 +29,8 @@ router.get("/:pid",async (req,res) =>{
 })
 
 router.post("/", async(req,res)=>{
-  const newProduct = await manager.createProducts(req.body);
+  const bodyProduct = req.body
+  const newProduct = await manager.createProducts(bodyProduct);
   if(newProduct !== undefined){
     return res.status(400).send("Product not created");
   }
@@ -33,10 +38,13 @@ router.post("/", async(req,res)=>{
 })
 
 router.put("/:pid", async(req,res)=>{
-  const idProduct = parseInt(req.params.pid);
- 
+  const idProduct = req.params.pid;
+  const validate =  manager.validateNumb(idProduct);
+  if(validate.success === false){
+    return res.status(400).send(validate.error)
+  }
   const putProduct = req.body;
-  const updateProduct = await manager.updateProducts(idProduct, putProduct);
+  const updateProduct = await manager.updateProducts(validate.result, putProduct);
   if(updateProduct === undefined){
     return res.status(400).send("Product not updated");
   }
@@ -44,8 +52,12 @@ router.put("/:pid", async(req,res)=>{
 })
 
 router.delete("/:pdi",async (req,res)=>{
-  const idProduct = parseInt(req.params.pdi);
-  const deleteProduct = await manager.deleteProduct(idProduct);
+  const idProduct = req.params.pdi;
+  const validate = manager.validateNumb(idProduct);
+  if(validate.success === false){
+    return res.status(400).send(validate.error)
+  }
+  const deleteProduct = await manager.deleteProduct(validate);
   if(deleteProduct !== undefined){
     return res.status(400).send("Product not deleted");
   }

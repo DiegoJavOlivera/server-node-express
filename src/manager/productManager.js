@@ -1,3 +1,4 @@
+import { error } from "console";
 import fs from "fs";
 
 const PATH = "src/file/products.json";
@@ -37,6 +38,13 @@ class productManager {
       return false;
     }
   }
+
+  validateNumb(numb) {
+    if (isNaN(numb)) {
+        return { success: false, error: "Incorrect character, it is not a number" };
+    }
+    return { success: true, result: parseInt(numb) };
+  }
   async createProducts({title, description, code, price, stock, category, thumbnails }) {
     const newProduct = {
       title,
@@ -70,7 +78,7 @@ class productManager {
     return product;
   }
   
-  async updateProducts(id, productUpdate) {
+  async updateProducts(id, productUpdate){
     const products = await this.getProducts();
     const index = products.findIndex((prod) => prod.id === id);
     if (index === -1) throw new Error("Product not found");

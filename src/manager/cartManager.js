@@ -69,7 +69,7 @@ class CartManager {
     const dataProductCart = await this.getProductsCart();
     const cartIndex = dataProductCart.findIndex((cid) => cid.id === idCart);
     if (cartIndex === -1){
-      throw Error("Cart index not found") 
+      throw new Error("Cart index not found") 
     }
     const dataProductManager = await manager.getProducts();
     const product = dataProductManager.find((pid) => pid.id === idProduct);

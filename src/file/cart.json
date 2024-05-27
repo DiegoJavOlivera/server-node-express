@@ -4,7 +4,24 @@
 		"id": 1
 	},
 	{
-		"product": [],
+		"product": [
+			{
+				"productId": 6,
+				"quantity": 1
+			},
+			{
+				"productId": 1,
+				"quantity": 1
+			},
+			{
+				"productId": 2,
+				"quantity": 1
+			},
+			{
+				"productId": 4,
+				"quantity": 1
+			}
+		],
 		"id": 2
 	},
 	{
