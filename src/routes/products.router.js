@@ -1,5 +1,6 @@
 import {Router} from "express";
 import productManager from "../manager/productManager.js";
+import uploader from "../middleware/uploader.js";
 
 const router = Router();
 
@@ -27,6 +28,14 @@ router.get("/:pid",async (req,res) =>{
   }
   res.send(product);
 })
+
+router.post("/", uploader.single('image'),async(req,res)=>{
+  console.log(req.file)
+  console.log(req.body)
+  res.send("prueba")
+
+})
+
 
 router.post("/", async(req,res)=>{
   const bodyProduct = req.body
